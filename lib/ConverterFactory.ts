@@ -11,19 +11,19 @@ export class ConverterFactory {
     if (typeof window === 'undefined') return;
     
     if (!this.imageWorker) {
-      this.imageWorker = new Worker(new URL('../workers/imageWorker.ts', import.meta.url));
+      this.imageWorker = new Worker(new URL('../workers/imageWorker.ts', import.meta.url), { type: 'module' });
     }
     
     if (!this.videoWorker) {
-      this.videoWorker = new Worker(new URL('../workers/videoWorker.ts', import.meta.url));
+      this.videoWorker = new Worker(new URL('../workers/videoWorker.ts', import.meta.url), { type: 'module' });
     }
     
     if (!this.documentWorker) {
-      this.documentWorker = new Worker(new URL('../workers/documentWorker.ts', import.meta.url));
+      this.documentWorker = new Worker(new URL('../workers/documentWorker.ts', import.meta.url), { type: 'module' });
     }
 
     if (!this.pdfWorker) {
-      this.pdfWorker = new Worker(new URL('../workers/pdfWorker.ts', import.meta.url));
+      this.pdfWorker = new Worker(new URL('../workers/pdfWorker.ts', import.meta.url), { type: 'module' });
     }
   }
 

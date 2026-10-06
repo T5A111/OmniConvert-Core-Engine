@@ -1,40 +1,167 @@
 # OmniConvert Core Engine ⚡
-*100% Local, Air-gapped, WebAssembly-powered Universal File Converter Engine.*
+*100% Local, Air-gapped, WebAssembly & Web Worker Universal Conversion Engine.*
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Platform: Browser](https://img.shields.io/badge/Platform-Browser-green.svg)]()
 ![Zero Uploads](https://img.shields.io/badge/Privacy-Zero%20Uploads-red)
+[![Vite](https://img.shields.io/badge/Vite-6.x-646CFF.svg)](https://vitejs.dev/)
 
-> 💡 **Experience the full, beautifully designed GUI with batch ZIP execution directly at [Omni-Convert.com](https://omni-convert.com)**
-
-## Introduction
-This repository contains the **unobfuscated core conversion algorithms** of OmniConvert. 
-OmniConvert's philosophy is absolute privacy—no backend servers, no cloud subscriptions, no data exfiltration. Every single conversion is securely routed to internal Browser APIs, Web Workers, or WebAssembly (WASM) instances. 
-
-By open-sourcing the "brain" of the converter, we aim to:
-1. **Prove our privacy claim**: Inspect the codebase yourself. There are zero outbound `fetch` or `XMLHttpRequest` calls for payload processing.
-2. **Help the developer community**: Implementing Client-side FFmpeg, PDF.js, and JSZip simultaneously can be a nightmare due to DOM restrictions, Cross-Origin Isolation (COOP/COEP) limitations, and Main-Thread UI blocking. Feel free to borrow our architectural design patterns!
-
-## Architecture Details
-- **`workers/videoWorker.ts`**: Implements `@ffmpeg/ffmpeg` inside a dedicated Web Worker mapping virtual file systems (VFS), allowing fast MP4/MP3/GIF transcodings.
-- **`workers/pdfWorker.ts` & `lib/pdfRenderer.ts`**: Bypasses Worker DOM restrictions by intelligently routing PDF page rendering (which requires `<canvas>`) to the Main Thread, while PDF merging (`pdf-lib`) is kept securely in the background.
-- **`workers/documentWorker.ts`**: Safely parses `xlsx`, `csv`, `json`, and bridges Markdown natively purely locally using `xlsx` and native ArrayBuffers.
-- **`lib/svgRenderer.ts`**: Incorporates `imagetracerjs` to execute high-fidelity raster-to-vector auto-tracing locally in the browser memory.
-- **`lib/ConverterFactory.ts`**: The central dispatcher that guarantees thread safety by determining whether a file belongs in a threaded Web Worker sandbox or requires strict Main Thread DOM access.
-
-## Why keep the React / Next.js implementation closed-source?
-Creating the core functionality is hard, but building a seamless multi-file batch processor with complex ZIP compressions, robust drag-and-drop state management, i18n dictionaries, and tailored frontend layouts takes an immense amount of time. Providing this backend engine validates our security integrity, while reserving the UI blocks malicious entities from direct clone-and-deploy copying. 
-
-## Contribution & Self-Hosting
-Since the engine relies entirely on client-side JS and WASM binaries, you don't need Docker, Node.js, or complex backends to execute these conversions. Any standard HTTP server or static hosting (like GitHub Pages or Vercel) serving these assets will inherently work offline without explicit backend configurations.
+> 💡 **Looking for the complete production application?**  
+> Experience multi-file batch conversions, automatic ZIP compression, drag-and-drop queues, and localized UI directly at **[Omni-Convert.com](https://omni-convert.com)**.
 
 ---
 
-### 繁體中文版本 (Traditional Chinese)
-這份儲存庫包含 **OmniConvert 萬用轉換器** 最核心的引擎演算法原始碼。
+## 📖 Introduction
 
-我們的核心理念是「終極隱私」——沒有伺服器、不用上傳、沒有資料外洩。藉由開放源始碼，我們希望：
-1. **證明我們的資安承諾**：您可以親自審查這份程式碼，裡面完全不包含任何向外傳送實體檔案 Payload 的 `fetch` 或後門。
-2. **技術社群交流**：要在純前端無痛整合 FFmpeg WASM、PDF 與 SVG 渲染是非常困難的工程（特別是多執行緒的 DOM 崩潰與嚴格的 COOP/COEP 安全黑屏）。這裡提供了經過市場驗證的防禦性架構參考。
+This repository contains the **standalone, unobfuscated core conversion engine** that powers OmniConvert.
 
-如果你剛好有檔案互切壓縮的需求，想要體驗具備多線程自動打包、完美視覺互動的完整系統，非常歡迎造訪 👉 **[OmniConvert 官方網站](https://omni-convert.com)**。
+Every conversion takes place **100% client-side** inside the user's browser using WebAssembly (WASM), Web Workers, and native HTML5 APIs. Zero bytes of payload data ever leave the machine.
+
+By open-sourcing the engine with a runnable testbench, we aim to:
+1. **Prove our Zero-Uploads Privacy Claim**: Audit the code yourself—there are zero outbound network requests for file payloads.
+2. **Empower Developers to Self-Host**: Provide a plug-and-play architecture that overcomes common browser bottlenecks (such as Web Worker DOM restrictions, SharedArrayBuffer security isolation, and FFmpeg memory leaks).
+
+---
+
+## 🚀 Quickstart: Run in 30 Seconds
+
+Clone this repo, install dependencies, and launch the local testbench:
+
+```bash
+# 1. Clone repository
+git clone https://github.com/T5A111/OmniConvert-Core-Engine.git
+cd OmniConvert-Core-Engine
+
+# 2. Install dependencies (automatically sets up local WASM & worker assets)
+npm install
+
+# 3. Start the local development testbench
+npm run dev
+```
+
+Open your browser at **`http://localhost:5173`**. You can immediately pick files, test format transcodings, and watch real-time execution logs!
+
+---
+
+## 🛠️ Architecture Overview
+
+The engine divides work between background Web Workers and Main Thread DOM contexts to avoid UI freezing while strictly adhering to browser security boundaries:
+
+| Path | Primary Technology | Responsibility |
+| :--- | :--- | :--- |
+| **`lib/ConverterFactory.ts`** | TypeScript Singleton | Central dispatcher. Manages Worker singletons and routes tasks between threads. |
+| **`workers/videoWorker.ts`** | `@ffmpeg/ffmpeg` (WASM) | Isolated Virtual File System (VFS). Executes MP4, MP3, WAV, and palette-optimized GIF encoding. |
+| **`workers/pdfWorker.ts`** | `pdf-lib` | Headless PDF merging (`merge_pdf`) and direct image-to-PDF packing (`images_to_pdf`). |
+| **`lib/pdfRenderer.ts`** | `pdfjs-dist` + `<canvas>` | Extracts PDF pages to high-res PNG/JPG images (routed to Main Thread to bypass Worker DOM limits). |
+| **`workers/documentWorker.ts`**| `xlsx` + `marked` | Bidirectional data conversion for Excel (XLSX), CSV, JSON, and Markdown parsing. |
+| **`workers/imageWorker.ts`** | `OffscreenCanvas` + `heic2any` | Metadata-stripping image re-encoding (PNG, JPG, WEBP) and HEIC photo decoding. |
+| **`lib/svgRenderer.ts`** | `imagetracerjs` | High-fidelity deterministic raster-to-vector auto-tracing. |
+
+---
+
+## 🌐 Self-Hosting & Deployment Guide
+
+### Critical Requirement: Cross-Origin Isolation (COOP & COEP)
+FFmpeg WASM and multi-threaded WebAssembly require `SharedArrayBuffer`, which modern browsers strictly gate behind **Cross-Origin Isolation**. 
+
+Your web server **MUST** serve pages with these two HTTP response headers:
+
+```http
+Cross-Origin-Opener-Policy: same-origin
+Cross-Origin-Embedder-Policy: require-corp
+```
+
+#### 1. Nginx
+Add to your `server` or `location` block:
+```nginx
+location / {
+    add_header Cross-Origin-Opener-Policy "same-origin";
+    add_header Cross-Origin-Embedder-Policy "require-corp";
+}
+```
+
+#### 2. Vercel (`vercel.json`)
+```json
+{
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "Cross-Origin-Opener-Policy", "value": "same-origin" },
+        { "key": "Cross-Origin-Embedder-Policy", "value": "require-corp" }
+      ]
+    }
+  ]
+}
+```
+
+#### 3. Cloudflare Pages (`_headers`)
+Create a `public/_headers` file:
+```
+/*
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Embedder-Policy: require-corp
+```
+
+---
+
+## 💻 How to Use as an In-App Library
+
+You can easily integrate `ConverterFactory` into your own React, Vue, Svelte, or vanilla web application:
+
+```typescript
+import { ConverterFactory } from './lib/ConverterFactory';
+
+async function handleConversion(userFile: File) {
+  // Convert an MP4 video to an animated GIF
+  const result = await ConverterFactory.convert(userFile, 'gif');
+
+  if (result.success && result.blob) {
+    const downloadUrl = URL.createObjectURL(result.blob);
+    console.log('Conversion completed! Download from:', downloadUrl);
+  } else {
+    console.error('Conversion failed:', result.error);
+  }
+}
+```
+
+---
+
+## 📜 License
+
+This core engine is released under the **MIT License**. You are free to inspect, modify, fork, and integrate it into your own open-source or commercial projects.
+
+---
+
+### 繁體中文版本 (Traditional Chinese Guide)
+
+### 這是什麼？
+這是 **OmniConvert 萬用轉換器** 的核心純前端離線轉檔引擎。我們將核心運算邏輯完整開放，讓有技術能力的開發者可以直接參考、研究，或架設屬於自己的純前端轉檔服務。
+
+### 核心特性
+- **100% 純前端離線轉換**：無伺服器後端、不消耗頻寬、完全杜絕資料外洩風險。
+- **FFmpeg WebAssembly 獨立執行緒**：在 Web Worker 內建立虛擬檔案系統（VFS），轉檔不卡頓主畫面。
+- **解決跨執行緒限制**：自動將依賴 DOM 的 PDF 頁面渲染與 ImageTracer 分流至主執行緒，其餘大量運算保持在背景 Worker。
+
+### 30 秒快速在本地啟動測試環境
+```bash
+# 1. 複製專案
+git clone https://github.com/T5A111/OmniConvert-Core-Engine.git
+cd OmniConvert-Core-Engine
+
+# 2. 安裝套件（自動複製 WASM 靜態資源至 public/ 目錄）
+npm install
+
+# 3. 啟動 Vite 本地測試工作台
+npm run dev
+```
+瀏覽器開啟 `http://localhost:5173` 即可立即選檔進行轉檔測試！
+
+### 自架伺服器重要設定 (COOP / COEP)
+瀏覽器為了保護 WebAssembly 多線程與 `SharedArrayBuffer`，要求伺服器必須回應以下兩項安全標頭：
+- `Cross-Origin-Opener-Policy: same-origin`
+- `Cross-Origin-Embedder-Policy: require-corp`
+本專案的 `vite.config.ts` 已在本地端配置好上述標頭。若部署至 Nginx、Vercel 或 Cloudflare Pages，請參閱上方英文說明配置相關標頭。
+
+### 體驗完整生產環境
+如果您需要批次多檔拖曳、自動打包 ZIP、自定義外觀與多語系支援，歡迎造訪 👉 **[OmniConvert 官方網站](https://omni-convert.com)**。

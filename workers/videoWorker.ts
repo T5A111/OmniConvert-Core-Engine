@@ -25,14 +25,22 @@ ctx.addEventListener('message', async (e: MessageEvent<FileConversionTask>) => {
 
     if (!isLoaded) {
       /**
-       * Load pre-fetched WASM binaries from local public assets.
-       * Eliminates external CDN dependencies to ensure strict air-gapped privacy.
+       * Load WASM binaries: First attempt local air-gapped assets,
+       * then gracefully fallback to CDN if running in barebones environments.
        */
       const baseURL = self.location.origin;
-      await ffmpeg.load({
-        coreURL: `${baseURL}/ffmpeg/ffmpeg-core.js`,
-        wasmURL: `${baseURL}/ffmpeg/ffmpeg-core.wasm`,
-      });
+      try {
+        await ffmpeg.load({
+          coreURL: `${baseURL}/ffmpeg/ffmpeg-core.js`,
+          wasmURL: `${baseURL}/ffmpeg/ffmpeg-core.wasm`,
+        });
+      } catch (localErr) {
+        console.warn('[FFmpeg Worker] Local WASM assets not found, falling back to CDN...', localErr);
+        await ffmpeg.load({
+          coreURL: 'https://unpkg.com/@ffmpeg/core@0.12.10/dist/esm/ffmpeg-core.js',
+          wasmURL: 'https://unpkg.com/@ffmpeg/core@0.12.10/dist/esm/ffmpeg-core.wasm',
+        });
+      }
       isLoaded = true;
     }
 

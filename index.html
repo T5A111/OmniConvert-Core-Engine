@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OmniConvert Core Engine - Developer Testbench</title>
+    <style>
+      :root {
+        --bg: #0f172a;
+        --card-bg: #1e293b;
+        --border: #334155;
+        --text: #f8fafc;
+        --text-muted: #94a3b8;
+        --primary: #38bdf8;
+        --primary-hover: #0284c7;
+        --success: #10b981;
+        --danger: #ef4444;
+        --terminal-bg: #030712;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        background-color: var(--bg);
+        color: var(--text);
+        padding: 2rem 1rem;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .container {
+        width: 100%;
+        max-width: 840px;
+      }
+      header {
+        margin-bottom: 2rem;
+        text-align: center;
+      }
+      h1 {
+        font-size: 2rem;
+        font-weight: 800;
+        letter-spacing: -0.025em;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+      }
+      .subtitle {
+        color: var(--text-muted);
+        font-size: 1rem;
+      }
+      .badges {
+        display: flex;
+        gap: 0.75rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 1rem;
+      }
+      .badge {
+        font-size: 0.8rem;
+        padding: 0.25rem 0.6rem;
+        border-radius: 9999px;
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+      }
+      .badge-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: var(--text-muted);
+      }
+      .badge-dot.active {
+        background-color: var(--success);
+      }
+      .badge-dot.inactive {
+        background-color: var(--danger);
+      }
+      .card {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+      }
+      .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-bottom: 1.25rem;
+      }
+      @media (max-width: 640px) {
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      label {
+        display: block;
+        font-size: 0.875rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--text-muted);
+      }
+      input[type="file"], select {
+        width: 100%;
+        padding: 0.65rem 0.85rem;
+        background: #0b1329;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        color: var(--text);
+        font-size: 0.95rem;
+        outline: none;
+      }
+      input[type="file"]:focus, select:focus {
+        border-color: var(--primary);
+      }
+      button {
+        width: 100%;
+        padding: 0.85rem 1.25rem;
+        background: var(--primary);
+        color: #030712;
+        font-weight: 700;
+        font-size: 1rem;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      button:hover:not(:disabled) {
+        background: var(--primary-hover);
+      }
+      button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      .terminal {
+        background: var(--terminal-bg);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 1rem;
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+        font-size: 0.85rem;
+        color: #38bdf8;
+        min-height: 180px;
+        max-height: 320px;
+        overflow-y: auto;
+        white-space: pre-wrap;
+        word-break: break-all;
+      }
+      .terminal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+        color: var(--text-muted);
+        font-size: 0.8rem;
+      }
+      .download-area {
+        margin-top: 1rem;
+        padding: 1rem;
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+        border-radius: 8px;
+        display: none;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .download-link {
+        color: #34d399;
+        font-weight: 600;
+        text-decoration: underline;
+        cursor: pointer;
+      }
+      footer {
+        margin-top: 2rem;
+        text-align: center;
+        color: var(--text-muted);
+        font-size: 0.875rem;
+      }
+      footer a {
+        color: var(--primary);
+        text-decoration: none;
+      }
+      footer a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>⚡ OmniConvert Core Engine</h1>
+        <p class="subtitle">Open-source client-side conversion runtime testbench</p>
+        <div class="badges">
+          <div class="badge">
+            <span class="badge-dot" id="dot-coop"></span>
+            <span id="label-coop">Cross-Origin Isolated: Checking...</span>
+          </div>
+          <div class="badge">
+            <span class="badge-dot" id="dot-wasm"></span>
+            <span id="label-wasm">WebAssembly: Ready</span>
+          </div>
+          <div class="badge">
+            <span class="badge-dot" id="dot-worker"></span>
+            <span id="label-worker">Web Worker: Ready</span>
+          </div>
+        </div>
+      </header>
+
+      <div class="card">
+        <div class="form-grid">
+          <div>
+            <label for="fileInput">Select Source File</label>
+            <input type="file" id="fileInput" />
+          </div>
+          <div>
+            <label for="targetFormat">Target Format</label>
+            <select id="targetFormat">
+              <optgroup label="Images">
+                <option value="png">PNG</option>
+                <option value="jpg">JPG / JPEG</option>
+                <option value="webp">WEBP</option>
+                <option value="svg">SVG (Vector Traced)</option>
+              </optgroup>
+              <optgroup label="Video & Audio (FFmpeg WASM)">
+                <option value="mp4">MP4 (Video)</option>
+                <option value="mp3">MP3 (Audio)</option>
+                <option value="gif">GIF (Animated)</option>
+                <option value="wav">WAV (Audio)</option>
+              </optgroup>
+              <optgroup label="PDF & Documents">
+                <option value="pdf">PDF (Images to PDF / Document)</option>
+                <option value="pdf_to_png">PDF to PNG Images</option>
+                <option value="pdf_to_jpg">PDF to JPG Images</option>
+                <option value="csv">CSV (Spreadsheet)</option>
+                <option value="json">JSON (Data)</option>
+                <option value="xlsx">Excel (XLSX)</option>
+                <option value="html">HTML (Markdown to HTML)</option>
+                <option value="md">Markdown (HTML to MD)</option>
+              </optgroup>
+            </select>
+          </div>
+        </div>
+
+        <button id="convertBtn">
+          <span>Run Core Conversion</span>
+        </button>
+
+        <div class="download-area" id="downloadArea">
+          <span id="downloadMsg">✅ Conversion Complete!</span>
+          <a class="download-link" id="downloadLink" download="">Download Result</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="terminal-header">
+          <span>Runtime Execution Logs</span>
+          <span id="perfTimer">0.00s</span>
+        </div>
+        <pre class="terminal" id="terminalLog">[System] Testbench initialized. Select a file to test the conversion engine.</pre>
+      </div>
+
+      <footer>
+        <p>
+          Need complete multi-file batch execution, ZIP packaging, and rich UI? Visit
+          <a href="https://omni-convert.com" target="_blank" rel="noopener noreferrer">Omni-Convert.com</a>
+        </p>
+      </footer>
+    </div>
+
+    <script type="module" src="/demo.ts"></script>
+  </body>
+</html>
