@@ -164,4 +164,4 @@ npm run dev
 本專案的 `vite.config.ts` 已在本地端配置好上述標頭。若部署至 Nginx、Vercel 或 Cloudflare Pages，請參閱上方英文說明配置相關標頭。
 
 ### 體驗完整生產環境
-如果您需要批次多檔拖曳、自動打包 ZIP、自定義外觀與多語系支援，歡迎造訪 👉 **[OmniConvert 官方網站](https://omni-convert.com)**。
+如果您需要完整的體驗，歡迎造訪 👉 **[OmniConvert 官方網站](https://omni-convert.com)**。
