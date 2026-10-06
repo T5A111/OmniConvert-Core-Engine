@@ -1,7 +1,7 @@
 # OmniConvert Core Engine ⚡
 *100% Local, Air-gapped, WebAssembly & Web Worker Universal Conversion Engine.*
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![License: PolyForm Noncommercial](https://img.shields.io/badge/License-PolyForm%20Noncommercial-blue.svg)](https://polyformproject.org/licenses/noncommercial/1.0.0)
 [![Platform: Browser](https://img.shields.io/badge/Platform-Browser-green.svg)]()
 ![Zero Uploads](https://img.shields.io/badge/Privacy-Zero%20Uploads-red)
 [![Vite](https://img.shields.io/badge/Vite-6.x-646CFF.svg)](https://vitejs.dev/)
@@ -127,16 +127,25 @@ async function handleConversion(userFile: File) {
 
 ---
 
-## 📜 License
+## 📜 License & Intellectual Property
 
-This core engine is released under the **MIT License**. You are free to inspect, modify, fork, and integrate it into your own open-source or commercial projects.
+This core engine is licensed under the **[PolyForm Noncommercial License 1.0.0](LICENSE)**.
+
+- ✅ **Permitted**: Free for personal learning, academic research, private self-hosting, and security audits.
+- ❌ **Prohibited**: Commercial exploitation, monetization, deploying commercial competitor services, or paid distribution without explicit written permission.
+
+For commercial licensing inquiries or enterprise integrations, please contact us via **[Omni-Convert.com](https://omni-convert.com)**.
 
 ---
 
 ### 繁體中文版本 (Traditional Chinese Guide)
 
 ### 這是什麼？
-這是 **OmniConvert 萬用轉換器** 的核心純前端離線轉檔引擎。我們將核心運算邏輯完整開放，讓有技術能力的開發者可以直接參考、研究，或架設屬於自己的純前端轉檔服務。
+這是 **OmniConvert 萬用轉換器** 的核心純前端離線轉檔引擎。我們將核心運算邏輯開放，供技術人員與愛好者進行學習研究、資安審查與個人非商業自架。
+
+### 授權規範 (PolyForm Noncommercial 1.0.0)
+- ✅ **允許**：個人學習研究、資安查核、個人或內部非商業私有自架。
+- ❌ **嚴禁**：未經授權將本專案用於任何商業營利服務、競品部署、收費分發或商業廣告整合。商業授權請洽 [OmniConvert 官方網站](https://omni-convert.com)。
 
 ### 核心特性
 - **100% 純前端離線轉換**：無伺服器後端、不消耗頻寬、完全杜絕資料外洩風險。

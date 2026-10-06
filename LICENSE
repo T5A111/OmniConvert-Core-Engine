@@ -1,0 +1,45 @@
+# PolyForm Noncommercial License 1.0.0
+
+https://polyformproject.org/licenses/noncommercial/1.0.0
+
+## Purpose
+
+This license allows each user to use this software for noncommercial purposes, while reserving commercial rights to the licensor (T5A111 / OmniConvert Team).
+
+## Agreement
+
+In order to receive this license, you have to agree to its rules. The rules of this license are both obligations under that agreement and conditions to your license. You must not do anything with this software that triggers a rule that you cannot or will not follow.
+
+## Notices
+
+You must ensure that everyone who gets a copy of any part of this software from you also gets a copy of this license or the URL for it above, as well as each copyright notice and other notice included in this software.
+
+## Anti-Reverse-Engineering
+
+You must not use this software to reverse-engineer, decompile, or disassemble other software that is not licensed under this license.
+
+## Noncommercial Use
+
+You may use this software for any noncommercial purpose. Noncommercial purposes are purposes that are not primarily intended for or directed towards commercial advantage or monetary compensation.
+
+Permitted uses include:
+- Personal, educational, academic, or security auditing purposes
+- Testing, debugging, and self-hosting private, noncommercial instances of this software
+- Contributing improvements or bug fixes back to this repository
+
+Prohibited commercial uses include:
+- Selling, sublicensing, or distributing this software or derivative works for a fee or monetary compensation
+- Deploying this software as a public commercial service, SaaS product, or commercial competitor to OmniConvert
+- Displaying third-party paid advertising, sponsorships, or paywalls in conjunction with the software
+
+## Fair Use
+
+You may use this software as allowed by the fair use doctrine and other statutory exceptions to copyright law.
+
+## Patent Defense
+
+If you sue or participate in a lawsuit against anyone claiming that this software infringes a patent, your license ends immediately.
+
+## No Warranties
+
+As far as the law allows, this software comes as is, without any warranty or condition, and no contributor will be liable to anyone for any damages related to this software or this license, under any kind of legal claim.
